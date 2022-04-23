@@ -25,6 +25,7 @@ internal class PhysSimulation : Simulation
     public override void OnRender(ICanvas canvas)
     {
         ImGui.SliderInt(nameof(steps), ref steps, 1, 16);
+        ImGui.Text(balls.Count);
         Ball.Layout();
 
         canvas.Translate(canvas.Width / 2f, canvas.Height / 2f);
@@ -62,16 +63,18 @@ internal class PhysSimulation : Simulation
                     var b1 = balls[i];
                     var b2 = balls[j];
                     
-                    var axis = new Vector2(b1.Position.X - b2.Position.X, b1.Position.Y - b2.Position.Y);
-                    var dist = (balls[i].Size + balls[j].Size);
+                    var axis = b1.Position - b2.Position;
+                    var dist = b1.Size + b2.Size;
+                    
                     if (axis.LengthSquared() < dist * dist)
                     {
                         var delta = dist - axis.Length();
-                        var totalMass = balls[i].Mass + balls[j].Mass;
-                        var fac1 = 1f - (balls[i].Mass / totalMass);
-                        var fac2 = 1f - (balls[j].Mass / totalMass);
-                        balls[i].Position += Vector2.Normalize(axis) * delta * fac1;
-                        balls[j].Position -= Vector2.Normalize(axis) * delta * fac2;
+                        var totalMass = b1.Mass + b2.Mass;
+                        var fac1 = 1f - (b1.Mass / totalMass);
+                        var fac2 = 1f - (b2.Mass / totalMass);
+                        var amt = axis == Vector2.Zero ? Vector2.Zero : Vector2.Normalize(axis) * delta;
+                        b1.Position += amt * fac1;
+                        b2.Position -= amt * fac2;
                     }
                 }
             }
