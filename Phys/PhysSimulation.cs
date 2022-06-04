@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SimulationFramework.Drawing.Canvas;
 
 namespace Phys;
 
@@ -18,6 +19,9 @@ internal class PhysSimulation : Simulation
 
     public override void OnInitialize(AppConfig config)
     {
+        config.Title = "physics";
+        config.Width = 1280;
+        config.Height = 720;
         balls = new();
         balls.Add(mb);
     }
@@ -31,7 +35,7 @@ internal class PhysSimulation : Simulation
         canvas.Translate(canvas.Width / 2f, canvas.Height / 2f);
         canvas.Scale(canvas.Height / 17f, -canvas.Height / 17f);
 
-        canvas.Transform.Invert(out var t);
+        Matrix3x2.Invert(canvas.State.Transform, out var t);
 
         if (Keyboard.IsKeyPressed(Key.A) || (Keyboard.IsKeyDown(Key.LShift) && Keyboard.IsKeyDown(Key.A)))
         {
@@ -80,7 +84,8 @@ internal class PhysSimulation : Simulation
             }
         }
         canvas.Clear(Color.Black);
-        canvas.DrawCircle((0, 0), 8f, Color.DarkGray);
+        canvas.Fill(Color.DarkGray);
+        canvas.DrawCircle(0, 0, 8f);
         balls.ForEach(b => b.Render(canvas));
     }
 }

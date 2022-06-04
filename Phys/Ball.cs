@@ -1,8 +1,10 @@
 ﻿using SimulationFramework;
+using SimulationFramework.Drawing.Canvas;
 using SimulationFramework.IMGUI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using Vector2 = System.Numerics.Vector2;
@@ -38,7 +40,7 @@ internal class Ball
         Random.Shared.NextBytes(col);
         Color result = new(col[0], col[1], col[2]);
 
-        if ((result.ToVector3().Normalized() - Color.DarkGray.ToVector3().Normalized()).Length() > Vector3.One.Length() - 0.1f)
+        if (Vector3.Distance(result.ToVector3(), Color.DarkGray.ToVector3()) > Vector3.One.Length() - 0.1f)
         {
             return RandColor();
         }
@@ -69,7 +71,8 @@ internal class Ball
 
     public void Render(ICanvas canvas)
     {
-        canvas.DrawCircle(this.Position, Size, Color.Black with { R = (byte)(255 * MathF.Cbrt(this.Velocity.Length() / MaxSpeed)) });
+        canvas.Fill(Color.Black with { R = (byte)(255 * MathF.Cbrt(this.Velocity.Length() / MaxSpeed)) });
+        canvas.DrawCircle(this.Position, Size);
     }
 
     public void Accelerate(Vector2 acceleration)

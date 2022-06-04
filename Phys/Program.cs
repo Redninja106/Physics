@@ -8,6 +8,7 @@ public static class Program
 {
     private static void Main()
     {
-        new PhysSimulation().RunWindowed("physics", 1280, 720);
+        var p = new PhysSimulation();
+        p.RunDesktop();
     }
 }
